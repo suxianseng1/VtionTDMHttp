@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.UserMapper">
+
+    <resultMap id="userresultmap" type="com.vo.UserVO">
+        <result property="userName" column="userName" />
+        <result property="phoneNum" column="phoneNum" />
+        <result property="factoryName" column="factoryName" />
+    </resultMap>
+
+    <select id="getUserList" resultMap="userresultmap">
+      select e.employeename username,e.phone phoneNum,f.factoryname factoryName from EMPLOYEE e
+      inner join sessionvalues s on s.sessionvaluesid=e.sessionvaluesid
+      inner join factory f on s.factoryid=f.factoryid
+    </select>
+</mapper>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.TaskInfoMapper">
+
+    <resultMap id="taskinfomap" type="com.vo.TaskInfoVO">
+        <result column="expApplyNo" property="expApplyNo" />
+        <result column="issueNo" property="issueNo" />
+        <result column="productCode" property="productCode" />
+        <result column="productName" property="productName" />
+        <result column="lot" property="lot" />
+        <result column="productNo" property="productNo" />
+        <result column="expName" property="expName" />
+        <result column="expDepartment" property="expDepartment" />
+        <result column="resourceType" property="resourceType" />
+        <result column="resourceName" property="resourceName" />
+        <result column="resourceNo" property="resourceNo" />
+        <result column="resourceStatus" property="resourceStatus" />
+        <result column="expPlanStartDate" property="expPlanStartDate" />
+        <result column="planStartTime" property="planStartTime" />
+        <result column="planEndTime" property="planEndTime" />
+        <result column="startTime" property="startTime" />
+        <result column="endTime" property="endTime" />
+
+    </resultMap>
+    <select id="getTaskInfoList" resultMap="taskinfomap">
+        select t.tdm_testappliname as expApplyNo,
+               t.projectname as issueNo,
+               pb.productname as productCode,
+               p.description as productName,
+               t.productbatch as lot,
+               t.productnumsview as productNo,
+               bop.description as expName,
+               f.factoryname as expDepartment,
+               r.resourcename as resourceType,
+               r.description as resourceName,
+               r.tdm_resourceno as resourceNo,
+               pts.availability as resourceStatus,
+               t.plan_exp_time as expPlanStartDate,
+               t.dd_starttime as planStartTime,
+               t.dd_endtime as planEndTime,
+               cts.test_starttime as startTime,
+               cts.test_endtime as endTime
+         from tdm_testappli t
+         inner join billofprocess bop
+            on bop.billofprocessid = t.billofprocessid
+         inner join factory f
+            on f.factoryid = t.AppliFactoryid
+          left join container c
+            on c.containername = t.tdm_testappliname
+          left join currentstatus cts
+            on cts.currentstatusid = c.currentstatusid
+          left join product p
+            on p.productid = t.productid
+          left join productbase pb
+            on pb.productbaseid = p.productbaseid
+          left join resourcedef r
+            on r.resourceid = t.planresourceid
+          left join productionstatus pts
+            on pts.resourceid = r.resourceid
+          where t.dd_starttime &gt; #{planStartTime} and t.dd_endtime &lt; #{planEndTime}
+    </select>
+</mapper>

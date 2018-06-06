@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ResourceMapper">
+
+    <resultMap id="resourcemappermap" type="com.vo.ResourceVO">
+        <result column="resourceId" property="resourceId" />
+        <result column="resourceName" property="resourceName" />
+        <result column="factoryName" property="factoryName" />
+        <result column="resourceFamily" property="resourceFamily" />
+        <result column="resourceType" property="resourceType" />
+        <!--<result column="" property="fixDate" />
+        <result column="" property="produceFactory" /> -->
+        <result column="taskNo" property="taskNo" />
+        <result column="mainTain" property="mainTain" />
+    </resultMap>
+    <!--编号、名称、所属科室名称、型号、类型、检修日期、生产厂家、当前任务编号、维护日期（客户有需求）-->
+    <select id="getResourceList" resultMap="resourcemappermap">
+        select
+        t.resourcenum          as resourceId,
+        t.resourcename        as resourceName,
+        t1.resourcetypename   as resourceType,
+        t2.factoryname        as factoryName,
+        t3.resourcefamilyname as resourceFamily,
+        t6.billofprocessname  as taskNo,
+        t7.nextdatedue        as mainTain
+        from resourcedef t
+        left join ResourceType t1
+        on t.resourcetypeid = t1.resourcetypeid
+        left join factory t2
+        on t.factoryid = t2.factoryid
+        left join ResourceFamily t3
+        on t3.resourcefamilyid = t.resourcefamilyid
+        left join tdm_testappli t4
+        on t4.planresourceid = t.resourceid
+        left join BillOfProcess t5
+        on t5.billofprocessid = t4.billofprocessid
+        left join Billofprocessbase t6
+        on t5.billofprocessbaseid = t6.billofprocessbaseid
+        left join MAINTENANCESTATUS t7
+        on t7.resourceid = t.resourceid
+    </select>
+</mapper>
